@@ -110,5 +110,4 @@ public class WhoisFilter implements Filter {
 			return isOverTime;
 		}
 	}
-
 }

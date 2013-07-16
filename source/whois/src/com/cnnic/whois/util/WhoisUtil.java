@@ -169,7 +169,7 @@ public class WhoisUtil {
 	public static String[] ASKeyFileds = { "Handle", "Start_Autnum",
 			"End_Autnum", "Name", "Lang", JOINNANOTICES,
 			//ARRAYFILEDPRX + "Description", 
-			"Type", "Country", JOINREMARKS,
+			"Type", ARRAYFILEDPRX + "Status", "Country", JOINREMARKS,
 			JOINLINKFILED, JOINEVENTS, JOINENTITESFILED };
 
 	public static String[] nameServerKeyFileds = { "Handle", "LdhName",
