@@ -203,7 +203,7 @@ public class WhoisUtil {
 			ARRAYFILEDPRX + "Fax", ARRAYFILEDPRX + "Mobile", "phonesId" };
 
 	public static String[] variantsKeyFileds = { ARRAYFILEDPRX + "Relation",
-			ARRAYFILEDPRX + "VariantNames", "variantsId", "IDNTable" };
+			ARRAYFILEDPRX + "Variant_Names", "variantsId", "IDNTable" };
 	
 	public static String[] ErrorMessageKeyFileds = { "Error_Code", "Title",
 		ARRAYFILEDPRX + "Description", JOINNANOTICES};
@@ -356,13 +356,13 @@ public class WhoisUtil {
 			0xFFFFFFFFFFFFFFFFl // 64
 	};
 
-	public static final String ERRORCODE = "4143";
+	public static final String ERRORCODE = "404";
 	public static final String ERRORTITLE = "Error Message";
-	public static final String [] ERRORDESCRIPTION = {"NO_RESULT"};
+	public static final String [] ERRORDESCRIPTION = {"NOT FOUND"};
 
-	public static final String COMMENDRRORCODE = "4144";
+	public static final String COMMENDRRORCODE = "400";
 	public static final String OMMENDERRORTITLE = "Error Message";
-	public static final String [] OMMENDERRORDESCRIPTION = {"COMMAND_SYNTAX_ERROR"};
+	public static final String [] OMMENDERRORDESCRIPTION = {"BAD REQUEST"};
 
 	public static final String UNCOMMENDRRORCODE = "4145";
 	public static final String UNOMMENDERRORTITLE = "Error Message";
@@ -370,7 +370,7 @@ public class WhoisUtil {
 	
 	public static final String RATELIMITECODE = "429";
 	public static final String RATELIMITEERRORTITLE = "Error Message";
-	public static final String [] RATELIMITEERRORDESCRIPTION = {"RATE_LIMIT"};
+	public static final String [] RATELIMITEERRORDESCRIPTION = {"RATE LIMIT"};
 
 	public static final String ADDCOLUMN1 = "alter table ";
 	public static final String ADDCOLUMN2 = " add column ";
@@ -982,7 +982,5 @@ public class WhoisUtil {
 		QueryService queryService = QueryService.getQueryService();
 		ErrorMessageMap = queryService.queryError(errorCode, role, format);
 		return ErrorMessageMap;
-		//return WhoisUtil.getErrorMessage(WhoisUtil.COMMENDRRORCODE,
-				//WhoisUtil.OMMENDERRORTITLE, WhoisUtil.OMMENDERRORDESCRIPTION);
 	}
 }
