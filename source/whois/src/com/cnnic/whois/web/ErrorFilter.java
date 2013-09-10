@@ -8,11 +8,9 @@ import java.util.Map;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -65,7 +63,8 @@ public class ErrorFilter implements Filter {
 			if(format.contains(sqhtml))
 				format = "application/html";
 		}
-		if(format == null || !(format.equals("application/html") || format.equals("application/json") || format.equals("application/xml"))){
+		if(format == null || !(format.equals("application/html") || format.equals("application/json") || format.equals("application/xml") || format.endsWith("application/rdap+json")
+				|| format.equals("application/text") || format.equals("application/rdap+json;application/json"))){
 			format = "application/html";
 		}
 		
@@ -107,16 +106,9 @@ public class ErrorFilter implements Filter {
 				queryType.equals(WhoisUtil.ENTITY) ||
 				queryType.equals(WhoisUtil.AUTNUM) ||
 				queryType.equals(WhoisUtil.NAMESERVER) ||
-				queryType.equals(WhoisUtil.HELP) 
-//				queryType.equals("delegationKeys") ||
-//				queryType.equals(WhoisUtil.LINKS) ||
-//				queryType.equals(WhoisUtil.PHONES) ||
-//				queryType.equals("postalAddress") ||
-//				queryType.equals(WhoisUtil.NOTICES) ||
-//				queryType.equals(WhoisUtil.REGISTRAR) ||
-//				queryType.equals(WhoisUtil.VARIANTS) ||
-//				queryType.equals(WhoisUtil.EVENTS) ||
-//				queryType.equals(WhoisUtil.REMARKS)
+				queryType.equals(WhoisUtil.HELP) ||
+				
+				queryType.equals(WhoisUtil.SEARCHDOMAIN)	//search functions of domain
 				){
 			return true;
 		}
@@ -135,7 +127,7 @@ public class ErrorFilter implements Filter {
 			Map<String, Object> map = new LinkedHashMap<String, Object>();
 			
 			try {
-				map = WhoisUtil.processError(WhoisUtil.ERRORCODE, role, format);
+				map = WhoisUtil.processError(WhoisUtil.COMMENDRRORCODE, role, format);
 			} catch (QueryException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -143,12 +135,12 @@ public class ErrorFilter implements Filter {
 			PrintWriter out = response.getWriter();
 			request.setAttribute("queryFormat", format);
 			response.setHeader("Access-Control-Allow-Origin", "*");
-			if(format.equals("application/json")){
+			if(format.equals("application/json") || format.equals("application/rdap+json") || format.equals("application/rdap+json;application/json")){
 				if(isLegalType(queryType)){
 					chain.doFilter(request, response);
 				}else{
 					response.setHeader("Content-Type", "application/json");
-					response.setStatus(404);
+					response.setStatus(HttpServletResponse.SC_BAD_REQUEST);//400 or 404
 					out.print(DataFormat.getJsonObject(map));
 				}
 			}else if(format.equals("application/xml")){
@@ -156,7 +148,7 @@ public class ErrorFilter implements Filter {
 					chain.doFilter(request, response);
 				}else{
 					response.setHeader("Content-Type", "application/xml");
-					response.setStatus(404);
+					response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 					out.write(DataFormat.getXmlString(map));
 				}
 			}else{
@@ -164,7 +156,7 @@ public class ErrorFilter implements Filter {
 					chain.doFilter(request, response);
 				}else{
 					response.setHeader("Content-Type", "text/plain");
-					response.setStatus(404);
+					response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 					out.write(DataFormat.getPresentation(map));
 				}
 			}

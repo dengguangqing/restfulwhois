@@ -51,7 +51,7 @@ public class ColumnCache {
 		variantsKeyFileds = getKeyList(WhoisUtil.VARIANTS);
 		LinkKeyFileds = getKeyList(WhoisUtil.LINK);
 		postalAddressKeyFileds = getKeyList(WhoisUtil.POSTALASSDESS);
-		delegationKeyFileds = getKeyList(WhoisUtil.DELEGATIONKEYS);
+		//delegationKeyFileds = getKeyList(WhoisUtil.DELEGATIONKEYS);
 		registrarKeyFileds = getKeyList(WhoisUtil.REGISTRAR);
 		noticesKeyFileds = getKeyList(WhoisUtil.NOTICES);
 		publicIdsKeyFileds = getKeyList(WhoisUtil.PUBLICIDS);

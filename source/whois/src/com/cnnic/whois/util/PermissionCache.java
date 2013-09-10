@@ -62,8 +62,8 @@ public class PermissionCache {
 		LinkMap = getKeyMap(WhoisUtil.LINKS, columnCache.getLinkKeyFileds());
 		postalAddressMap = getKeyMap(WhoisUtil.POSTALASSDESS,
 				columnCache.getPostalAddressKeyFileds());
-		delegationMap = getKeyMap(WhoisUtil.DELEGATIONKEYS,
-				columnCache.getDelegationKeyFileds());
+		//delegationMap = getKeyMap(WhoisUtil.DELEGATIONKEYS,
+				//columnCache.getDelegationKeyFileds());
 		registrarMap = getKeyMap(WhoisUtil.REGISTRAR,
 				columnCache.getRegistrarKeyFileds());
 		noticesMap = getKeyMap(WhoisUtil.NOTICES,

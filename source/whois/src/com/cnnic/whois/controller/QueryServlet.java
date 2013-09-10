@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.net.IDN;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.servlet.RequestDispatcher;
@@ -188,7 +189,7 @@ public class QueryServlet extends HttpServlet {
 				map = processQueryEvents(queryPara, role, format);
 				break;
 			case 5:
-				map = processQueryHelp(role, format);
+				map = processQueryHelp(queryPara, role, format);
 				break;
 			case 6:
 				map = processQueryIP(queryPara, role, format);
@@ -226,7 +227,7 @@ public class QueryServlet extends HttpServlet {
 				map = processQueryVariants(queryPara, role, format);
 				break;
 			default:
-				map = WhoisUtil.processError(WhoisUtil.ERRORCODE, role, format);
+				map = WhoisUtil.processError(WhoisUtil.COMMENDRRORCODE, role, format);
 				break;
 			}
 			request.setAttribute("queryPara", queryPara);
@@ -251,8 +252,11 @@ public class QueryServlet extends HttpServlet {
 		processRespone(request, response, map);
 	}
 	
-	private Map<String, Object> processQueryHelp(String role, String format) throws QueryException {
+	private Map<String, Object> processQueryHelp(String queryPara, String role, String format) throws QueryException {
 		QueryService queryService = QueryService.getQueryService();
+		if(!queryPara.equals("")){
+			return WhoisUtil.processError(WhoisUtil.COMMENDRRORCODE, role, format);
+		}
 		return queryService.queryHelp("helpID", role, format);
 	}
 
@@ -629,6 +633,8 @@ public class QueryServlet extends HttpServlet {
 		response.setCharacterEncoding("utf-8");
 		
 		String format = getFormatCookie(request);
+		Map<String, Object> htmlMap = new LinkedHashMap<String, Object>();
+		htmlMap.putAll(map);
 		
 		PrintWriter out = response.getWriter();
 		String errorCode = "200"; 
@@ -636,6 +642,7 @@ public class QueryServlet extends HttpServlet {
 		request.setAttribute("queryFormat", format);
 		response.setHeader("Access-Control-Allow-Origin", "*");
 		
+		//set response status
 		if(map.containsKey("errorCode") || map.containsKey("Error Code")){
 			if(map.containsKey("errorCode"))
 				errorCode = map.get("errorCode").toString();
@@ -648,28 +655,33 @@ public class QueryServlet extends HttpServlet {
 				response.setStatus(400);
 			}
 		}
+		//multi-responses
+		
+		Iterator<String> iterr = map.keySet().iterator();
+		String multiKey = null;
+		while(iterr.hasNext()){
+			String key =  iterr.next();
+			if(key.startsWith(WhoisUtil.MULTIPRX)){
+				multiKey = key;
+			}
+		}
+		if(multiKey != null){
+			Object jsonObj = map.get(multiKey);
+			map.remove(multiKey);
+			map.put(multiKey.substring(WhoisUtil.MULTIPRX.length()), jsonObj);
+		}
+		
 		if (format.equals("application/json") || format.equals("application/rdap+json") || format.equals("application/rdap+json;application/json")) { // depending on the return type of the response corresponding data
 			response.setHeader("Content-Type", "application/json");
-			Iterator<String> iterr = map.keySet().iterator();
-			String multiKey = null;
-			while(iterr.hasNext()){
-				String key =  iterr.next();
-				if(key.startsWith("$mul$")){
-					multiKey = key;
-				}
-			}
-			if(multiKey != null){
-				Object jsonObj = map.get(multiKey);
-				out.print(DataFormat.getJsonArray(jsonObj));
-			}else{
-				out.print(DataFormat.getJsonObject(map));
-			}
+			out.print(DataFormat.getJsonObject(map));
 		} else if (format.equals("application/xml")) {
 			response.setHeader("Content-Type", "application/xml");
 			out.write(DataFormat.getXmlString(map));
 		} else if (format.equals("application/html")) {
 			if(!errorCode.equals(WhoisUtil.ERRORCODE) && !errorCode.equals(WhoisUtil.COMMENDRRORCODE)){
-				request.setAttribute("JsonObject", DataFormat.getJsonObject(map));
+				if(htmlMap.containsKey(WhoisUtil.RDAPCONFORMANCEKEY))
+					htmlMap.remove(WhoisUtil.RDAPCONFORMANCEKEY);
+				request.setAttribute("JsonObject", DataFormat.getJsonObject(htmlMap));
 				RequestDispatcher rdsp = request.getRequestDispatcher("/index.jsp");
 				response.setContentType("application/html");
 				rdsp.forward(request, response);

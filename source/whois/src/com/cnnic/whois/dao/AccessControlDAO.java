@@ -72,7 +72,6 @@ public class AccessControlDAO {
 						results.getString(WhoisUtil.AUTHENTICATED));
 				userList.put(WhoisUtil.ROOT, results.getString(WhoisUtil.ROOT));
 				permissionList.put(columnName, userList);
-
 			}
 			return permissionList;
 		} catch (SQLException e) {

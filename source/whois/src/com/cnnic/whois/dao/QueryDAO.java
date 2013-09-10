@@ -89,8 +89,13 @@ public class QueryDAO {
 								+ WhoisUtil.SELECT_LIST_IPv6_6 + endLowAddr
 								+ WhoisUtil.SELECT_LIST_IPv6_7 + WhoisUtil.SELECT_LIST_IPv6_9);
 			}
-			map = query(connection, selectSql,
+			
+			Map<String, Object> ipMap = query(connection, selectSql,
 					permissionCache.getIPKeyFileds(role), "$mul$IP", role, format);
+			if(ipMap != null){
+				map = rdapConformance(map);
+				map.putAll(ipMap);
+			}
 			if(map != null){
 				map.remove(WhoisUtil.getDisplayKeyName("StartLowAddress", format));
 				map.remove(WhoisUtil.getDisplayKeyName("EndLowAddress", format));
@@ -128,9 +133,13 @@ public class QueryDAO {
 			connection = ds.getConnection();
 			String selectSql = WhoisUtil.SELECT_LIST_DNRDOMAIN + "'"
 					+ queryInfo + "'";
-			map = query(connection, selectSql,
-					permissionCache.getDNRDomainKeyFileds(role), "$mul$domain",
+			Map<String, Object> domainMap = query(connection, selectSql,
+					permissionCache.getDNRDomainKeyFileds(role), "$mul$domains",
 					role, format);
+			if(domainMap != null){
+				map =  rdapConformance(map);
+				map.putAll(domainMap);
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 			throw new QueryException(e);
@@ -162,10 +171,13 @@ public class QueryDAO {
 			connection = ds.getConnection();
 			String selectSql = WhoisUtil.SELECT_LIST_RIRDOMAIN + "'"
 					+ queryInfo + "'";
-
-			map = query(connection, selectSql,
-					permissionCache.getRIRDomainKeyFileds(role), "$mul$domain",
+			Map<String, Object> domainMap = query(connection, selectSql,
+					permissionCache.getRIRDomainKeyFileds(role), "$mul$domains",
 					role, format);
+			if(domainMap != null){
+				map = rdapConformance(map);
+				map.putAll(domainMap);
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 			throw new QueryException(e);
@@ -197,9 +209,13 @@ public class QueryDAO {
 			connection = ds.getConnection();
 			String selectSql = WhoisUtil.SELECT_LIST_DNRENTITY + "'"
 					+ queryInfo + "'";
-			map = query(connection, selectSql,
+			Map<String, Object> entityMap = query(connection, selectSql,
 					permissionCache.getDNREntityKeyFileds(role), "$mul$entity",
 					role, format);
+			if(entityMap != null){
+				map = rdapConformance(map);
+				map.putAll(entityMap);
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 			throw new QueryException(e);
@@ -231,9 +247,13 @@ public class QueryDAO {
 			connection = ds.getConnection();
 			String selectSql = WhoisUtil.SELECT_LIST_RIRENTITY + "'"
 					+ queryInfo + "'";
-			map = query(connection, selectSql,
+			Map<String, Object> entityMap = query(connection, selectSql,
 					permissionCache.getRIREntityKeyFileds(role), "$mul$entity",
 					role, format);
+			if(entityMap != null){
+				map = rdapConformance(map);
+				map.putAll(entityMap);
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 			throw new QueryException(e);
@@ -266,8 +286,12 @@ public class QueryDAO {
 			String selectSql = WhoisUtil.SELECT_LIST_AS1 + queryInfo
 					+ WhoisUtil.SELECT_LIST_AS2 + queryInfo
 					+ WhoisUtil.SELECT_LIST_AS3;
-			map = query(connection, selectSql,
+			Map<String, Object> asMap = query(connection, selectSql,
 					permissionCache.getASKeyFileds(role), "$mul$autnum", role, format);
+			if(asMap != null){
+				map = rdapConformance(map);
+				map.putAll(asMap);
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 			throw new QueryException(e);
@@ -300,9 +324,13 @@ public class QueryDAO {
 
 			String selectSql = WhoisUtil.SELECT_LIST_NAMESREVER + "'"
 					+ queryInfo + "'";
-			map = query(connection, selectSql,
+			Map<String, Object> nsMap = query(connection, selectSql,
 					permissionCache.getNameServerKeyFileds(role),
 					"$mul$nameServer", role, format);
+			if(nsMap != null){
+				map = rdapConformance(map);
+				map.putAll(nsMap);
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 			throw new QueryException(e);
@@ -742,15 +770,20 @@ public class QueryDAO {
 	public Map<String, Object> getErrorMessage(String errorCode, String role, String format)
 			throws QueryException {
 		Connection connection = null;
-		Map<String, Object> errorMessageMap = null;
+		Map<String, Object> map = null;
 		try {
 			connection = ds.getConnection();
 
 			String selectSql = WhoisUtil.SELECT_LIST_ERRORMESSAGE + "'"
 					+ errorCode + "'";
-			errorMessageMap = query(connection, selectSql,
+			Map<String, Object> errorMessageMap = query(connection, selectSql,
 					permissionCache.getErrorMessageKeyFileds(role),
 					"$mul$errormessage", role, format);
+			if(errorMessageMap != null){
+				map =  rdapConformance(map);
+				map.putAll(errorMessageMap);
+			}
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 			throw new QueryException(e);
@@ -762,7 +795,7 @@ public class QueryDAO {
 				}
 			}
 		}
-		return errorMessageMap;
+		return map;
 	}
 	
 	
@@ -792,20 +825,11 @@ public class QueryDAO {
 			results = stmt.executeQuery();
 
 			List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+			
 			while (results.next()) {
-
-				Map<String, Object> map = new LinkedHashMap<String, Object>();
-				
 				//Iteration results, according to the parameters in the collection can get to the data in the query results, 
 				//according to the order of the data in the collection will be added to the map collection from the return
-				
-				//the first most top conformance object
-				if(!keyName.startsWith(WhoisUtil.JOINFILEDPRX)){
-					Object[] conform = new Object[1];
-					conform[0] = "rdap_level_0";
-					map.put("rdapConformance", conform);
-				}
-				
+				Map<String, Object> map = new LinkedHashMap<String, Object>();
 				for (int i = 0; i < keyFlieds.size(); i++) {
 					Object resultsInfo = null;
 					
@@ -1194,14 +1218,18 @@ public class QueryDAO {
 	public Map<String, Object> getHelp(String helpCode, String role,
 			String format) throws QueryException {
 		Connection connection = null;
-		Map<String, Object> helpMap = null;
+		Map<String, Object> map = null;
 		try {
 			connection = ds.getConnection();
 
 			String selectSql = WhoisUtil.SELECT_HELP + "'" + helpCode + "'";
-			helpMap = query(connection, selectSql,
+			Map<String, Object> helpMap = query(connection, selectSql,
 					permissionCache.getHelpKeyFileds(role),
 					"$mul$notices", role, format);
+			if(helpMap != null){
+				map = rdapConformance(map);
+				map.putAll(helpMap);
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 			throw new QueryException(e);
@@ -1213,6 +1241,16 @@ public class QueryDAO {
 				}
 			}
 		}
-		return helpMap;
+		return map;
+	}
+	
+	private Map<String, Object> rdapConformance(Map<String, Object> map){
+		if(map == null){
+			map = new LinkedHashMap<String, Object>();
+		}
+		Object[] conform = new Object[1];
+		conform[0] = WhoisUtil.RDAPCONFORMANCE;
+		map.put(WhoisUtil.RDAPCONFORMANCEKEY, conform);
+		return map;
 	}
 }

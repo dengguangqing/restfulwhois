@@ -131,7 +131,7 @@ public class WhoisFilter implements Filter {
 			
 			if(format.equals("application/html")){
 				response.sendError(429);
-			}else if(format.equals("application/json")){
+			}else if(format.equals("application/json") || format.equals("application/rdap+json") || format.equals("application/rdap+json;application/json")){
 				response.setHeader("Content-Type", "application/json");
 				out.print(DataFormat.getJsonObject(map));
 			}else if(format.equals("application/xml")){

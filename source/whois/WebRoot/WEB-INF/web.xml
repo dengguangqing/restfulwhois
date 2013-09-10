@@ -46,7 +46,8 @@
 		<url-pattern>/help/*</url-pattern>
 		<url-pattern>/secureDNS/*</url-pattern>
 		<url-pattern>/dsData/*</url-pattern>
-		<url-pattern>/keyData/*</url-pattern>		
+		<url-pattern>/keyData/*</url-pattern>
+		<url-pattern>/domains/*</url-pattern>		
 	</filter-mapping>
 	
 	<servlet>
@@ -73,6 +74,7 @@
 		<url-pattern>/secureDNS/*</url-pattern>
 		<url-pattern>/dsData/*</url-pattern>
 		<url-pattern>/keyData/*</url-pattern>
+		<url-pattern>/domains/*</url-pattern>
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>AuthOpenIDServlet</servlet-name>

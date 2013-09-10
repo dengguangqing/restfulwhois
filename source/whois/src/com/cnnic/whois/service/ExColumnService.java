@@ -98,45 +98,64 @@ public class ExColumnService {
 			columnCache.setASKeyFileds();
 			break;
 		case 1:
-			columnCache.setDelegationKeyFileds();
-			break;
-		case 2:
 			columnCache.setDNRDomainKeyFileds();
 			break;
-		case 3:
+		case 2:
 			columnCache.setDNREntityKeyFileds();
 			break;
+		case 3:
+			columnCache.setDsDataKeyFileds();
+			break;
 		case 4:
-			columnCache.setIPKeyFileds();
+			columnCache.setErrorMessageKeyFileds();
 			break;
 		case 5:
-			columnCache.setLinkKeyFileds();
+			columnCache.setEventsKeyFileds();
 			break;
 		case 6:
-			columnCache.setNameServerKeyFileds();
 			break;
 		case 7:
-			columnCache.setNoticesKeyFileds();
+			columnCache.setIPKeyFileds();
 			break;
 		case 8:
-			columnCache.setPhonesKeyFileds();
+			columnCache.setKeyDataKeyFileds();
 			break;
 		case 9:
-			columnCache.setPostalAddressKeyFileds();
+			columnCache.setLinkKeyFileds();
 			break;
 		case 10:
-			columnCache.setRegistrarKeyFileds();
+			columnCache.setNameServerKeyFileds();
 			break;
 		case 11:
-			columnCache.setRIRDomainKeyFileds();
+			columnCache.setNoticesKeyFileds();
 			break;
 		case 12:
-			columnCache.setRIREntityKeyFileds();
+			columnCache.setPhonesKeyFileds();
 			break;
 		case 13:
+			columnCache.setPostalAddressKeyFileds();
+			break;
+		case 14:
+			columnCache.setPublicIdsKeyFileds();
+			break;
+		case 15:
+			columnCache.setRegistrarKeyFileds();
+			break;
+		case 16:
+			columnCache.setRemarksKeyFileds();
+			break;
+		case 17:
+			columnCache.setRIRDomainKeyFileds();
+			break;
+		case 18:
+			columnCache.setRIREntityKeyFileds();
+			break;
+		case 19:
+			columnCache.setSecureDNSKeyFileds();
+			break;
+		case 20:
 			columnCache.setVariantsKeyFileds();
 			break;
-
 		}
 	}
 }

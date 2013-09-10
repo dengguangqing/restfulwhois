@@ -35,10 +35,10 @@
 				username = user.getName();
 			}
 			request.setAttribute("user", user);
-			String[] tableNames = { "autnum", "delegationkeys", "dnrdomain",
-					"dnrentity", "ip", "links", "nameserver", "phones",
-					"postaladdress", "rirdomain", "rirentity", "variants",
-					"notices", "register" ,"events","remarks"};
+			String[] tableNames = {"autnum", "dnrdomain", 
+		"dnrentity", "dsData", "errormessage", "events", "ip", "keyData", "link",
+			"nameserver", "notices", "phones", "postaladdress", "publicIds", "registrar",
+			"remarks", "rirdomain", "rirentity", "secureDNS", "variants"};
 		%>
 
 		<div id="wrapper">
